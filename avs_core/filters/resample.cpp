@@ -85,8 +85,6 @@ __forceinline __m128i simd_load_streaming(const __m128i* adr)
 
 static void resize_v_planar_pointresize(BYTE* dst, const BYTE* src, int dst_pitch, int src_pitch, ResamplingProgram* program, int width, int target_height, const int* pitch_table, const void* storage)
 {
-  int filter_size = program->filter_size;
-
   for (int y = 0; y < target_height; y++) {
     int offset = program->pixel_offset[y];
     const BYTE* src_ptr = src + pitch_table[offset];
@@ -97,9 +95,18 @@ static void resize_v_planar_pointresize(BYTE* dst, const BYTE* src, int dst_pitc
   }
 }
 
+template<int f_size>
 static void resize_v_c_planar(BYTE* dst, const BYTE* src, int dst_pitch, int src_pitch, ResamplingProgram* program, int width, int target_height, const int* pitch_table, const void* storage)
 {
-  int filter_size = program->filter_size;
+  if (f_size != program->filter_size) {
+    // Internal error?
+  }
+
+  int filter_size = f_size;
+  if (filter_size == 0) {
+    filter_size = program->filter_size;
+  }
+
   short* current_coeff = program->pixel_coefficient;
 
   for (int y = 0; y < target_height; y++) {
@@ -122,9 +129,18 @@ static void resize_v_c_planar(BYTE* dst, const BYTE* src, int dst_pitch, int src
 }
 
 #ifdef X86_32
+template<int f_size>
 static void resize_v_mmx_planar(BYTE* dst, const BYTE* src, int dst_pitch, int src_pitch, ResamplingProgram* program, int width, int target_height, const int* pitch_table, const void* storage)
 {
-  int filter_size = program->filter_size;
+  if (f_size != program->filter_size) {
+    // Internal error?
+  }
+
+  int filter_size = f_size;
+  if (filter_size == 0) {
+    filter_size = program->filter_size;
+  }
+
   short* current_coeff = program->pixel_coefficient;
 
   int wMod8 = (width / 8) * 8;
@@ -226,10 +242,18 @@ static void resize_v_mmx_planar(BYTE* dst, const BYTE* src, int dst_pitch, int s
 }
 #endif
 
-template<SSELoader load>
+template<SSELoader load, int f_size>
 static void resize_v_sse2_planar(BYTE* dst, const BYTE* src, int dst_pitch, int src_pitch, ResamplingProgram* program, int width, int target_height, const int* pitch_table, const void* storage)
 {
-  int filter_size = program->filter_size;
+  if (f_size != program->filter_size) {
+    // Internal error?
+  }
+
+  int filter_size = f_size;
+  if (filter_size == 0) {
+    filter_size = program->filter_size;
+  }
+
   short* current_coeff = program->pixel_coefficient;
   
   int wMod16 = (width / 16) * 16;
@@ -328,14 +352,22 @@ static void resize_v_sse2_planar(BYTE* dst, const BYTE* src, int dst_pitch, int 
   }
 }
 
-template<SSELoader load>
+template<SSELoader load, int f_size>
 static void resize_v_ssse3_planar(BYTE* dst, const BYTE* src, int dst_pitch, int src_pitch, ResamplingProgram* program, int width, int target_height, const int* pitch_table, const void* storage)
 {
-  int filter_size = program->filter_size;
+  if (f_size != program->filter_size) {
+     // Internal error?
+  }
+
+  int filter_size = f_size;
+  if (filter_size == 0) {
+    filter_size = program->filter_size;
+  }
+
   short* current_coeff = program->pixel_coefficient;
   
   int wMod16 = (width / 16) * 16;
-
+  
   __m128i zero = _mm_setzero_si128();
   __m128i coeff_unpacker = _mm_set_epi8(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0);
 
@@ -695,6 +727,37 @@ PVideoFrame __stdcall FilteredResizeV::GetFrame(int n, IScriptEnvironment* env)
 
 ResamplerV FilteredResizeV::GetResampler(int CPU, bool aligned, void*& storage, ResamplingProgram* program)
 {
+  switch (program->filter_size) {
+#define FILTER_SIZE(n) \
+  case n: return GetResamplerInternal<n>(CPU, aligned, storage, program); break;
+
+    FILTER_SIZE(1);
+    FILTER_SIZE(2);
+    FILTER_SIZE(3);
+    FILTER_SIZE(4);
+    FILTER_SIZE(5);
+    FILTER_SIZE(6);
+    FILTER_SIZE(7);
+    FILTER_SIZE(8);
+    FILTER_SIZE(9);
+    FILTER_SIZE(10);
+    FILTER_SIZE(11);
+    FILTER_SIZE(12);
+    FILTER_SIZE(13);
+    FILTER_SIZE(14);
+    FILTER_SIZE(15);
+    FILTER_SIZE(16);
+
+#undef FILTER_SIZE
+
+  default:
+    return GetResamplerInternal<0>(CPU, aligned, storage, program);
+  }
+}
+
+template<int filter_size>
+ResamplerV FilteredResizeV::GetResamplerInternal(int CPU, bool aligned, void*& storage, ResamplingProgram* program)
+{
   if (program->filter_size == 1) {
     // Fast pointresize
     return resize_v_planar_pointresize;
@@ -702,30 +765,30 @@ ResamplerV FilteredResizeV::GetResampler(int CPU, bool aligned, void*& storage, 
     // Other resizers
     if (CPU & CPUF_SSSE3) {
       if (aligned && CPU & CPUF_SSE4_1) {
-        return resize_v_ssse3_planar<simd_load_streaming>;
+        return resize_v_ssse3_planar<simd_load_streaming, filter_size>;
       } else if (aligned) { // SSSE3 aligned
-        return resize_v_ssse3_planar<simd_load_aligned>;
+        return resize_v_ssse3_planar<simd_load_aligned, filter_size>;
       } else if (CPU & CPUF_SSE3) { // SSE3 lddqu
-        return resize_v_ssse3_planar<simd_load_unaligned_sse3>;
+        return resize_v_ssse3_planar<simd_load_unaligned_sse3, filter_size>;
       } else { // SSSE3 unaligned
-        return resize_v_ssse3_planar<simd_load_unaligned>;
+        return resize_v_ssse3_planar<simd_load_unaligned, filter_size>;
       }
     } else if (CPU & CPUF_SSE2) {
       if (aligned && CPU & CPUF_SSE4_1) { // SSE4.1 movntdqa constantly provide ~2% performance increase in my testing
-        return resize_v_sse2_planar<simd_load_streaming>;
+        return resize_v_sse2_planar<simd_load_streaming, filter_size>;
       } else if (aligned) { // SSE2 aligned
-        return resize_v_sse2_planar<simd_load_aligned>;
+        return resize_v_sse2_planar<simd_load_aligned, filter_size>;
       } else if (CPU & CPUF_SSE3) { // SSE2 lddqu
-        return resize_v_sse2_planar<simd_load_unaligned_sse3>;
+        return resize_v_sse2_planar<simd_load_unaligned_sse3, filter_size>;
       } else { // SSE2 unaligned
-        return resize_v_sse2_planar<simd_load_unaligned>;
+        return resize_v_sse2_planar<simd_load_unaligned, filter_size>;
       }
 #ifdef X86_32
     } else if (CPU & CPUF_MMX) {
-      return resize_v_mmx_planar;
+      return resize_v_mmx_planar<filter_size>;
 #endif
     } else { // C version
-      return resize_v_c_planar;
+      return resize_v_c_planar<filter_size>;
     }
   }
 }

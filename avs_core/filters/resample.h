@@ -98,7 +98,9 @@ public:
   virtual ~FilteredResizeV(void);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
-  static ResamplerV FilteredResizeV::GetResampler(int CPU, bool aligned, void*& storage, ResamplingProgram* program);
+  static ResamplerV GetResampler(int CPU, bool aligned, void*& storage, ResamplingProgram* program);
+  template<int filter_size>
+  static ResamplerV GetResamplerInternal(int CPU, bool aligned, void*& storage, ResamplingProgram* program);
 
 private:
   ResamplingProgram *resampling_program_luma;
