@@ -381,6 +381,7 @@ static void resize_v_ssse3_planar(BYTE* dst, const BYTE* src, int dst_pitch, int
 
       const BYTE* src2_ptr = src_ptr+x;
       
+#pragma unroll(f_size)
       for (int i = 0; i < filter_size; i++) {
         __m128i src_p = load(reinterpret_cast<const __m128i*>(src2_ptr));
 
