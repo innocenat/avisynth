@@ -75,7 +75,7 @@ void MTGuard::EnableMT(size_t nThreads)
   {
     switch (MTMode)
     {
-    case MT_NICE_PLUGIN:
+    case MT_NICE_FILTER:
       {
         // Nothing to do
         break;
@@ -121,7 +121,7 @@ PVideoFrame __stdcall MTGuard::GetFrame(int n, IScriptEnvironment* env)
 
   switch (MTMode)
   {
-  case MT_NICE_PLUGIN:
+  case MT_NICE_FILTER:
     {
       frame = ChildFilters[0]->GetFrame(n, env);
       break;
@@ -166,7 +166,7 @@ void __stdcall MTGuard::GetAudio(void* buf, __int64 start, __int64 count, IScrip
 
   switch (MTMode)
   {
-  case MT_NICE_PLUGIN:
+  case MT_NICE_FILTER:
     {
       ChildFilters[0]->GetAudio(buf, start, count, env);
       break;
@@ -212,10 +212,7 @@ int __stdcall MTGuard::SetCacheHints(int cachehints, int frame_range)
 
 bool __stdcall MTGuard::IsMTGuard(const PClip& p)
 {
-  if ((p->GetVersion() >= 5) && (p->SetCacheHints(CACHE_IS_MTGUARD_REQ, 0) == CACHE_IS_MTGUARD_ANS))
-    return true;
-  else
-    return false;
+  return ((p->GetVersion() >= 5) && (p->SetCacheHints(CACHE_IS_MTGUARD_REQ, 0) == CACHE_IS_MTGUARD_ANS));
 }
 
 AVSValue MTGuard::Create(const AVSFunction* func, std::vector<AVSValue>* args2, std::vector<AVSValue>* args3, IScriptEnvironment2* env)
@@ -225,9 +222,12 @@ AVSValue MTGuard::Create(const AVSFunction* func, std::vector<AVSValue>* args2, 
 
   if (func_result.IsClip() && !Cache::IsCache(func_result.AsClip()) && !MTGuard::IsMTGuard(func_result.AsClip()))
   {
-    MtMode mode = env->GetFilterMTMode(func->name);
     PClip filter_instance = func_result.AsClip();
-    if ( (filter_instance->GetVersion() >= 5)
+
+    bool mode_forced;
+    MtMode mode = env->GetFilterMTMode(func->name, &mode_forced);
+    if ( !mode_forced
+      && (filter_instance->GetVersion() >= 5)
       && (filter_instance->SetCacheHints(CACHE_GET_MTMODE, 0) != 0) )
     {
       mode = (MtMode)filter_instance->SetCacheHints(CACHE_GET_MTMODE, 0);
@@ -235,7 +235,7 @@ AVSValue MTGuard::Create(const AVSFunction* func, std::vector<AVSValue>* args2, 
 
     switch (mode)
     {
-    case MT_NICE_PLUGIN:
+    case MT_NICE_FILTER:
       {
         return func_result;
       }
@@ -246,8 +246,11 @@ AVSValue MTGuard::Create(const AVSFunction* func, std::vector<AVSValue>* args2, 
         // args2 and args3 are not valid after this point anymore
       }
     default:
+      // There are broken plugins out there in the wild that have (GetVersion() >= 5), but still 
+      // return garbage for SetCacheHints(). This default label should also catch those.
       assert(0);
-      return NULL;
+      // TODO: Log warning about probably broken plugin
+      return new MTGuard(filter_instance, MT_SERIALIZED, func, args2, args3, env);
     }
   }
   else

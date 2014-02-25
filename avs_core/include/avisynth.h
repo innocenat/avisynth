@@ -1009,7 +1009,7 @@ public:
 enum MtMode
 {
   MT_INVALID = 0,
-  MT_NICE_PLUGIN = 1,
+  MT_NICE_FILTER = 1,
   MT_MULTI_INSTANCE = 2,
   MT_SERIALIZED = 3,
   MT_MODE_COUNT = 4
@@ -1034,17 +1034,16 @@ typedef AVSValue (*ThreadWorkerFuncPtr)(IScriptEnvironment2* env, void* data);
 
 enum AvsEnvProperty
 {
-  AEP_INVALID = 0,
   AEP_PHYSICAL_CPUS = 1,
   AEP_LOGICAL_CPUS = 2,
   AEP_THREADPOOL_THREADS = 3,
   AEP_FILTERCHAIN_THREADS = 4,
-  AEP_THREAD_ID = 5
+  AEP_THREAD_ID = 5,
+  AEP_VERSION = 6
 };
 
 enum AvsAllocType
 {
-  AVS_INVALID_ALLOC = 0,
   AVS_NORMAL_ALLOC  = 1,
   AVS_POOLED_ALLOC  = 2
 };
@@ -1085,7 +1084,7 @@ public:
 
   // Threading
   virtual void __stdcall SetFilterMTMode(const char* filter, MtMode mode, bool force) = 0; // If filter is "", sets the default MT mode
-  virtual MtMode __stdcall GetFilterMTMode(const char* filter) const = 0;                  // If filter is "", gets the default MT mode
+  virtual MtMode __stdcall GetFilterMTMode(const char* filter, bool* is_forced) const = 0; // If filter is "", gets the default MT mode
   virtual IJobCompletion* __stdcall NewCompletion(size_t capacity) = 0;
   virtual void __stdcall ParallelJob(ThreadWorkerFuncPtr jobFunc, void* jobData, IJobCompletion* completion) = 0;
 

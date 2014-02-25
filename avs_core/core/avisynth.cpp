@@ -468,15 +468,20 @@ public:
       ForcedMap[f] = mode;
   }
 
-  MtMode GetMode(const char* filter) const
+  MtMode GetMode(const char* filter, bool* is_forced) const
   {
+    *is_forced = false;
+
     if (filter == DEFAULT_MODE)
       return DefaultMode;
 
     std::string f = NormalizeFilterName(filter);
     MTModeMapType::const_iterator it = ForcedMap.find(f);
     if (it != ForcedMap.end())
+    {
+      *is_forced = true;
       return it->second;
+    }
 
     it = PerFilterMap.find(f);
     if (it != PerFilterMap.end())
@@ -547,7 +552,7 @@ public:
   virtual void __stdcall AdjustMemoryConsumption(size_t amount, bool minus);
   virtual bool __stdcall Invoke(AVSValue *result, const char* name, const AVSValue& args, const char* const* arg_names=0);
   virtual void __stdcall SetFilterMTMode(const char* filter, MtMode mode, bool force);
-  virtual MtMode __stdcall GetFilterMTMode(const char* filter) const;
+  virtual MtMode __stdcall GetFilterMTMode(const char* filter, bool* is_forced) const;
   virtual void __stdcall ParallelJob(ThreadWorkerFuncPtr jobFunc, void* jobData, IJobCompletion* completion);
   virtual IJobCompletion* __stdcall NewCompletion(size_t capacity);
   virtual size_t  __stdcall GetProperty(AvsEnvProperty prop);
@@ -690,7 +695,7 @@ ScriptEnvironment::ScriptEnvironment()
     global_var_table->Set("$ScriptFile$", AVSValue());
     global_var_table->Set("$ScriptDir$",  AVSValue());
 
-    global_var_table->Set("MT_NICE_PLUGIN",     (int)MT_NICE_PLUGIN);
+    global_var_table->Set("MT_NICE_FILTER",     (int)MT_NICE_FILTER);
     global_var_table->Set("MT_MULTI_INSTANCE",  (int)MT_MULTI_INSTANCE);
     global_var_table->Set("MT_SERIALIZED",      (int)MT_SERIALIZED);
 
@@ -797,12 +802,12 @@ void __stdcall ScriptEnvironment::SetFilterMTMode(const char* filter, MtMode mod
   MTMap.SetMode(filter, mode, force);
 }
 
-MtMode __stdcall ScriptEnvironment::GetFilterMTMode(const char* filter) const
+MtMode __stdcall ScriptEnvironment::GetFilterMTMode(const char* filter, bool* is_forced) const
 {
   if (streqi(filter, ""))
     filter = MTMapState::DEFAULT_MODE;
 
-  return MTMap.GetMode(filter);
+  return MTMap.GetMode(filter, is_forced);
 }
 
 void* __stdcall ScriptEnvironment::Allocate(size_t nBytes, size_t alignment, AvsAllocType type)
@@ -854,9 +859,6 @@ size_t  __stdcall ScriptEnvironment::GetProperty(AvsEnvProperty prop)
 {
   switch(prop)
   {
-  case AEP_INVALID:
-    this->ThrowError("Invalid property request.");
-    break;
   case AEP_FILTERCHAIN_THREADS:
     return (prefetcher != NULL) ? prefetcher->NumPrefetchThreads()+1 : 1;
   case AEP_PHYSICAL_CPUS:
@@ -867,12 +869,14 @@ size_t  __stdcall ScriptEnvironment::GetProperty(AvsEnvProperty prop)
     return 0;
   case AEP_THREADPOOL_THREADS:
     return thread_pool->NumThreads();
+  case AEP_VERSION:
+    return AVS_SEQREV;
   default:
-    break;
+    this->ThrowError("Invalid property request.");
+    return std::numeric_limits<size_t>::max();
   }
 
-  // This is unlikely to be mistaken for an actual value
-  return std::numeric_limits<size_t>::max();
+  assert(0);
 }
 
 int __stdcall ScriptEnvironment::IncrImportDepth()
