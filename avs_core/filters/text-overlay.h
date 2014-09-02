@@ -92,6 +92,8 @@ public:
 			int _textcolor, int _halocolor, int font_width, int font_angle, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~ShowFrameNumber(){}
+
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
 
 private:
@@ -112,6 +114,8 @@ public:
   ShowSMPTE(PClip _child, double _rate, const char* _offset, int _offset_f, int _x, int _y, const char _fontname[], int _size,
 			int _textcolor, int _halocolor, int font_width, int font_angle, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~ShowSMPTE(){}
 
   static AVSValue __cdecl CreateSMTPE(AVSValue args, void*, IScriptEnvironment* env);
   static AVSValue __cdecl CreateTime(AVSValue args, void*, IScriptEnvironment* env);

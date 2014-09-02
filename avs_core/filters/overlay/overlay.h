@@ -51,7 +51,7 @@ class Overlay : public GenericVideoFilter
 public:
   Overlay(PClip _child, AVSValue args, IScriptEnvironment *env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment *env);
-  ~Overlay();
+  virtual __stdcall ~Overlay();
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override 

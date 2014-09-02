@@ -391,6 +391,7 @@ void __stdcall MergeChannels::GetAudio(void* buf, __int64 start, __int64 count, 
 #ifdef X86_32
 		if (env->GetCPUFlags() & CPUF_MMX) 
     {
+#if AVS_INTEL_ASSEMBLY
       __asm 
       {
         mov eax,[src_buf]
@@ -421,6 +422,7 @@ void __stdcall MergeChannels::GetAudio(void* buf, __int64 start, __int64 count, 
       done:
         emms
       }
+#endif
     }
 		else 
 #endif // X86_32
@@ -634,7 +636,7 @@ AVSValue __cdecl KillAudio::Create(AVSValue args, void*, IScriptEnvironment*) {
  *****************************/
 
 DelayAudio::DelayAudio(double delay, PClip _child)
-    : GenericVideoFilter(_child), delay_samples(__int64(delay * vi.audio_samples_per_second + 0.5)) {
+    : GenericVideoFilter(_child), delay_samples((__int64)(delay * vi.audio_samples_per_second + 0.5)) {
   vi.num_audio_samples += delay_samples;
 }
 
@@ -676,6 +678,7 @@ void __stdcall Amplify::GetAudio(void* buf, __int64 start, __int64 count, IScrip
     const short* endsample = (short*)buf + countXchannels;
     const int* iv = i_v;
 
+#if AVS_INTEL_ASSEMBLY
     __asm {
           mov	 ecx, [iv]
           mov	 edi, [buf]
@@ -710,6 +713,7 @@ saturate0:
           cmp	 edi, [endsample]
           jl	 iloop0
     }
+#endif
 #else
   short* samples = (short*)buf;
   for (int i = 0; i < countXchannels; i+=channels) {
@@ -730,6 +734,7 @@ saturate0:
     const int* endsample = (int*)buf + countXchannels;
     const int* iv = i_v;
 
+#if AVS_INTEL_ASSEMBLY
     __asm {
           mov	 ecx, [iv]
           mov	 edi, [buf]
@@ -764,6 +769,7 @@ saturate1:
           cmp	 edi, [endsample]
           jl	 iloop1
     }
+#endif
 #else
   int* samples = (int*)buf;
   for (int i = 0; i < countXchannels; i+=channels) {
@@ -977,6 +983,7 @@ void __stdcall Normalize::GetAudio(void* buf, __int64 start, __int64 count, IScr
 #ifdef X86_32
     const short* endsample = (short*)buf + chanXcount;
 
+#if AVS_INTEL_ASSEMBLY
     __asm {
           mov	 ecx, [factor]
           mov	 edi, [buf]
@@ -1005,6 +1012,7 @@ saturate2:
           cmp	 edi, [endsample]
           jl	 iloop2
     }
+#endif
 #else
     short* samples = (short*)buf;
     for (int i = 0; i < chanXcount; ++i) {
@@ -1092,6 +1100,7 @@ void __stdcall MixAudio::GetAudio(void* buf, __int64 start, __int64 count, IScri
 
   if (vi.SampleType()&SAMPLE_INT16) {
 #ifdef X86_32
+#if AVS_INTEL_ASSEMBLY
     const short* tbuffer = (short*)tempbuffer;
     const short* endsample = (short*)buf + unsigned(count)*channels;
 	  const int t1_factor = track1_factor;
@@ -1134,6 +1143,7 @@ saturate3:
           jl	 iloop3
 		  pop    ebx
     }
+#endif
 #else
     short* samples = (short*)buf;
     short* clip_samples = (short*)tempbuffer;
@@ -1258,8 +1268,8 @@ void __stdcall ResampleAudio::GetAudio(void* buf, __int64 start, __int64 count, 
     child->GetAudio(buf, start, count, env);
     return ;
   }
-  __int64 src_start = __int64(((long double)start           / factor) * (1 << Np) + 0.5);
-  __int64 src_end   = __int64(((long double)(start + count) / factor) * (1 << Np) + 0.5);
+  __int64 src_start = (__int64)(((long double)start           / factor) * (1 << Np) + 0.5);
+  __int64 src_end   = (__int64)(((long double)(start + count) / factor) * (1 << Np) + 0.5);
   const __int64 source_samples = ((src_end - src_start) >> Np) + 2 * Xoff + 1;
   const int source_bytes = (int)vi.BytesFromAudioSamples(source_samples);
 
@@ -1313,6 +1323,7 @@ void __stdcall ResampleAudio::GetAudio(void* buf, __int64 start, __int64 count, 
 // MM3 - Rounding constant 1 << (NLpScl-1), (4096)
 // MM2 - Scaled number of guard bits, mNhg
 
+#if AVS_INTEL_ASSEMBLY
 	  __asm {
 		movd       mm6, [r_Na]          ; 1 << (Na - 1)
 		movd       mm5, [r_Nhxn]        ; 1 << (Nhxn - 1)
@@ -1325,18 +1336,20 @@ void __stdcall ResampleAudio::GetAudio(void* buf, __int64 start, __int64 count, 
 		movd       mm2, [eax].mNhg      ; Number of guard bits
 		punpckldq  mm3, mm3             ; 00001000 00001000
 	  }
+#endif
 
 	  while (dst < dst_end) {
 		for (int q = 0; q < ch; q+=2) { // do 2 channels at once
 		  bool single = (q+1 >= ch);
 		  short* Xp = &srcbuffer[posNp * ch];
 
-		  __asm pxor mm7, mm7;  // 2 channel samples are accumulated in MM7
-
 		  FilterUD_mmx(Xp + ch + q, (unsigned)(-pos) & Pmask,  inc, dhb, Imp, Nwing);  /* Perform right-wing inner product */
 		  FilterUD_mmx(Xp      + q, (unsigned)( pos) & Pmask, -inc, dhb, Imp, Nwing);  /* Perform left-wing inner product */
-		  
+
+#if AVS_INTEL_ASSEMBLY
 		  __asm {
+		  pxor mm7, mm7                  ; 2 channel samples are accumulated in MM7
+
 		    psrad      mm7, mm2              ; scaled Nhg guard bits
 		     mov       eax, [dst]
 			pmaddwd    mm7, mm4              ; Normalize for unity filter gain
@@ -1360,7 +1373,9 @@ dosingle:
 			align      16
 done1:
 		  }
+#endif
 		} // for (int q = 0
+#if AVS_INTEL_ASSEMBLY
 		__asm { // Don't be a creep ;-)
 		  mov       edx, this
 		   mov      eax, dtberror            ; time increment error accumulator
@@ -1380,8 +1395,11 @@ nofix:
 		   mov      dword ptr pos+4, edx
 		  mov       posNp, ecx
 		}
+#endif
 	  } // while (dst
+#ifdef AVS_INTEL_ASSEMBLY
 	  __asm emms;
+#endif
 	}
 	else
 #endif // X86_32
@@ -1488,6 +1506,7 @@ void FilterUD_mmx(short *Xp, unsigned Ph, int _inc, int _dhb, short *p_Imp, unsi
     if (Ph == 0)    // If the phase is zero then we've already skipped the
       Ho += _dhb;   // first sample, so we must also skip ahead in Imp[]
   }
+#if AVS_INTEL_ASSEMBLY
 __asm {
 	mov			edi,[Xp]
 	mov			esi,[Ho]
@@ -1526,6 +1545,7 @@ loop1:
 	 jb			loop1
 donone:
   }
+#endif
 }
 #pragma warning( pop )
 #endif // X86_32

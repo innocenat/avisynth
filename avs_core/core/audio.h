@@ -91,6 +91,7 @@ class AssumeRate : public NonCachedGenericVideoFilter
 {
 public:
   AssumeRate(PClip _clip, int _rate);
+  virtual __stdcall ~AssumeRate(){}
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment*);
 };
 
@@ -103,7 +104,7 @@ class ConvertToMono : public GenericVideoFilter
 {
 public:
   ConvertToMono(PClip _clip);
-  virtual ~ConvertToMono()
+  virtual __stdcall ~ConvertToMono()
   {if (tempbuffer_size) {delete[] tempbuffer;tempbuffer_size=0;}}
 
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
@@ -123,6 +124,7 @@ class EnsureVBRMP3Sync : public GenericVideoFilter
 {
 public:
   EnsureVBRMP3Sync(PClip _clip);
+  virtual __stdcall ~EnsureVBRMP3Sync(){}
 
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
   int __stdcall SetCacheHints(int cachehints, int frame_range);
@@ -139,7 +141,7 @@ class MergeChannels : public GenericVideoFilter
 {
 public:
   MergeChannels(PClip _clip, int _num_children, PClip* _child_array, IScriptEnvironment* env);
-  ~MergeChannels();
+  virtual __stdcall ~MergeChannels();
 
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment*);
@@ -161,7 +163,7 @@ class GetChannel : public GenericVideoFilter
 {
 public:
   GetChannel(PClip _clip, int* _channel, int numchannels);
-  virtual ~GetChannel()
+  virtual __stdcall ~GetChannel()
   {
     if (tempbuffer_size) {delete[] tempbuffer;tempbuffer_size=0;}
     if (channel)         {delete[] channel;   channel=0;        }
@@ -192,6 +194,7 @@ class KillVideo : public GenericVideoFilter
 {
 public:
   KillVideo(PClip _clip);
+  virtual __stdcall ~KillVideo(){}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) { return NULL; };
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment*);
 };
@@ -204,6 +207,7 @@ class KillAudio : public GenericVideoFilter
 {
 public:
   KillAudio(PClip _clip);
+  virtual __stdcall ~KillAudio(){}
   void __stdcall GetAudio(void* buf, int start, int count, IScriptEnvironment* env) {};
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment*);
 };
@@ -216,6 +220,7 @@ class DelayAudio : public GenericVideoFilter
 {
 public:
   DelayAudio(double delay, PClip _child);
+  virtual __stdcall ~DelayAudio() {}
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -233,7 +238,7 @@ class Amplify : public GenericVideoFilter
 {
 public:
   Amplify(PClip _child, float* _volumes, int* _i_v);
-  ~Amplify();
+  virtual __stdcall ~Amplify();
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -259,6 +264,7 @@ class Normalize : public GenericVideoFilter
 {
 public:
   Normalize(PClip _child, float _max_factor, bool _showvalues);
+  virtual __stdcall ~Normalize() {}
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
@@ -282,7 +288,7 @@ public:
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
-  virtual ~MixAudio() {if (tempbuffer_size) delete[] tempbuffer;tempbuffer_size=0;}
+  virtual __stdcall ~MixAudio() {if (tempbuffer_size) delete[] tempbuffer;tempbuffer_size=0;}
 
 
 private:
@@ -301,7 +307,7 @@ class ResampleAudio : public GenericVideoFilter
 {
 public:
   ResampleAudio(PClip _child, int _target_rate_n, int _target_rate_d, IScriptEnvironment* env);
-  virtual ~ResampleAudio()
+  virtual __stdcall ~ResampleAudio()
     { delete[]  srcbuffer;
       delete[] fsrcbuffer; }
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);

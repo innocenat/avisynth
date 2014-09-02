@@ -53,6 +53,7 @@ private:
 
 public:
   StackVertical(const std::vector<PClip>& child_array, IScriptEnvironment* env);
+  virtual __stdcall ~StackVertical() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) {
@@ -87,6 +88,7 @@ private:
 
 public:
   StackHorizontal(const std::vector<PClip>& child_array, IScriptEnvironment* env);
+  virtual __stdcall ~StackHorizontal() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) {
@@ -118,6 +120,7 @@ class ShowFiveVersions : public IClip
 {  
 public:
   ShowFiveVersions(PClip* children, IScriptEnvironment* env);
+  virtual __stdcall ~ShowFiveVersions() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) 
@@ -153,7 +156,7 @@ class Animate : public IClip
 public:
   Animate( PClip context, int _first, int _last, const char* _name, const AVSValue* _args_before, 
            const AVSValue* _args_after, int _num_args, bool _range_limit, IScriptEnvironment* env );
-  virtual ~Animate() 
+  virtual __stdcall ~Animate()
     { delete[] args_before; }
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);

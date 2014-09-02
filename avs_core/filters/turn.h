@@ -50,6 +50,8 @@ class Turn : public GenericVideoFilter {
 public:
   Turn(PClip _child, int _direction, IScriptEnvironment* env);
 
+  virtual __stdcall ~Turn(){}
+
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   int __stdcall SetCacheHints(int cachehints, int frame_range) override;
 

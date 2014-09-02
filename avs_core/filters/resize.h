@@ -50,6 +50,8 @@ public:
   VerticalReduceBy2(PClip _child, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~VerticalReduceBy2(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }

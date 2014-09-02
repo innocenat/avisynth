@@ -48,7 +48,7 @@ private:
 
 public:
   Cache(const PClip& child, IScriptEnvironment* env);
-  ~Cache();
+  __stdcall ~Cache();
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
   const VideoInfo& __stdcall GetVideoInfo();

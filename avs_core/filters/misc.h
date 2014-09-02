@@ -52,6 +52,8 @@ public:
   FixLuminance(PClip _child, int _vertex, int _slope, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~FixLuminance(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -72,6 +74,8 @@ public:
   FixBrokenChromaUpsampling(PClip _clip, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~FixBrokenChromaUpsampling(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -88,6 +92,8 @@ class PeculiarBlend : public GenericVideoFilter
 public:
   PeculiarBlend(PClip _child, int _cutoff, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~PeculiarBlend(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -108,6 +114,8 @@ class SkewRows : public GenericVideoFilter
 public:
   SkewRows(PClip _child, int skew, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~ShowRows();
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;

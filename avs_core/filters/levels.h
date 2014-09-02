@@ -52,7 +52,7 @@ class Levels : public GenericVideoFilter
 public:
   Levels( PClip _child, int in_min, double gamma, int in_max, int out_min, int out_max, bool coring, bool _dither,
           IScriptEnvironment* env );
-  ~Levels();
+  virtual __stdcall ~Levels();
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -79,7 +79,7 @@ public:
                           double rb, double gb, double bb, double ab,
                           double rg, double gg, double bg, double ag,
                           bool _analyze, bool _dither, IScriptEnvironment* env);
-  ~RGBAdjust();
+  virtual __stdcall ~RGBAdjust();
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -105,7 +105,7 @@ public:
                        double _startHue, double _endHue, double _maxSat, double _minSat, double _interp,
                        bool _dither, IScriptEnvironment* env );
 
-  ~Tweak();
+  virtual __stdcall ~Tweak();
 
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
@@ -130,6 +130,8 @@ class MaskHS : public GenericVideoFilter
 {
 public:
   MaskHS( PClip _child, double _startHue, double _endHue, double _maxSat, double _minSat, bool _coring, IScriptEnvironment* env );
+
+  virtual __stdcall ~MaskHS(){}
 
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 

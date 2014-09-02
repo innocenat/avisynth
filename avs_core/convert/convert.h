@@ -75,7 +75,9 @@ class ConvertToRGB : public GenericVideoFilter
 public:
   ConvertToRGB(PClip _child, bool rgb24, const char* matrix, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
-  
+
+  virtual __stdcall ~ConvertToRGB(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -97,6 +99,8 @@ class ConvertToYV12 : public GenericVideoFilter
 public:
   ConvertToYV12(PClip _child, bool _interlaced, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~ConvertToYV12(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;

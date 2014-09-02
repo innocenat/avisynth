@@ -54,7 +54,7 @@ class FilteredResizeH : public GenericVideoFilter
 public:
   FilteredResizeH( PClip _child, double subrange_left, double subrange_width, int target_width, 
                    ResamplingFunction* func, IScriptEnvironment* env );
-  virtual ~FilteredResizeH(void);
+  virtual __stdcall ~FilteredResizeH(void);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -98,7 +98,7 @@ class FilteredResizeV : public GenericVideoFilter
 {
 public:
   FilteredResizeV( PClip _child, double subrange_top, double subrange_height, int target_height, ResamplingFunction* func, IScriptEnvironment* env );
-  virtual ~FilteredResizeV(void);
+  virtual __stdcall ~FilteredResizeV(void);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {

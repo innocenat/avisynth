@@ -45,6 +45,7 @@ class AdjustFocusV : public GenericVideoFilter
 {
 public:
   AdjustFocusV(double _amount, PClip _child);
+  virtual __stdcall ~AdjustFocusV() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -63,6 +64,7 @@ class AdjustFocusH : public GenericVideoFilter
 {
 public:
   AdjustFocusH(double _amount, PClip _child);
+  virtual __stdcall ~AdjustFocusH() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -90,6 +92,8 @@ public:
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
 
+  virtual __stdcall ~TemporalSoften(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -115,6 +119,8 @@ class SpatialSoften : public GenericVideoFilter
 public:
   SpatialSoften(PClip _child, int _radius, unsigned _luma_threshold, unsigned _chroma_threshold, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~SpatialSoften(){}
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
 

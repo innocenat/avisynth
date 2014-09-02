@@ -53,7 +53,7 @@ public:
   static AVSValue __cdecl Create_16bit(AVSValue args, void*, IScriptEnvironment*);
   static AVSValue __cdecl Create_8bit (AVSValue args, void*, IScriptEnvironment*);
   static AVSValue __cdecl Create_Any  (AVSValue args, void*, IScriptEnvironment*);
-  virtual ~ConvertAudio();
+  virtual __stdcall ~ConvertAudio();
 
 private:
   void convertToFloat(char* inbuf, float* outbuf, char sample_type, int count);

@@ -82,6 +82,26 @@
 
 #ifdef AVS_GCC
 #define __single_inheritance
+#define _aligned_malloc(a,b) malloc(a)
+#define _aligned_free        free
+#define _strcmpi             strcmp
+#define _stdcall __stdcall
+#define _cdecl __cdecl
+#define __forceinline  inline
+
+#include <stdint.h>
+typedef int64_t INT64;
+#ifdef __int64
+#undef __int64
+#endif
+typedef int64_t __int64;
+
+// TODO: I am not even sure what these do
+#define _control87(x,y) 0
+#define _clear87() 0
+
+#define _ASSERT(x)
+
 #endif
 
 #endif //AVS_CONFIG_H

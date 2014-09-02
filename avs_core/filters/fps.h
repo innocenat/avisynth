@@ -54,6 +54,7 @@ class AssumeScaledFPS : public NonCachedGenericVideoFilter
 {
 public:
   AssumeScaledFPS(PClip _child, int multiplier, int divisor, bool sync_audio, IScriptEnvironment* env);
+  virtual __stdcall ~AssumeScaledFPS(){}
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
 };
 
@@ -65,6 +66,7 @@ class AssumeFPS : public NonCachedGenericVideoFilter
 {
 public:
   AssumeFPS(PClip _child, unsigned numerator, unsigned denominator, bool sync_audio, IScriptEnvironment* env);
+  virtual __stdcall ~AssumeFPS(){}
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
   static AVSValue __cdecl CreateFloat(AVSValue args, void*, IScriptEnvironment* env);
   static AVSValue __cdecl CreatePreset(AVSValue args, void*, IScriptEnvironment* env);
@@ -81,6 +83,8 @@ public:
   ChangeFPS(PClip _child, unsigned new_numerator, unsigned new_denominator, bool linear, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
+
+  virtual __stdcall ~ChangeFPS() {}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     //todo: not really sure if it has to be serialized or can do with multiple instances
@@ -110,6 +114,8 @@ public:
               int _vbi, IScriptEnvironment* env );
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
+
+  virtual __stdcall ~ConvertFPS() {}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;

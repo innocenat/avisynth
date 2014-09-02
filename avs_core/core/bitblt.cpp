@@ -53,6 +53,7 @@ static void asm_BitBlt_ISSE(BYTE* dstp, int dst_pitch, const BYTE* srcp, int src
   BYTE* dstStart=dstp+dst_pitch*(height-1);
 
   if(row_size < 64) {
+#ifdef AVS_INTEL_ASSEMBLY
     _asm {
       mov   esi,srcStart  //move rows from bottom up
       mov   edi,dstStart
@@ -73,12 +74,14 @@ memoptS_byteloop:
       dec   ebx
       jne   memoptS_rowloop
     };
+#endif
     return;
   }//end small version
 
   else if( (int(dstp) | row_size | src_pitch | dst_pitch) & 7) {//not QW aligned
     //unaligned version makes no assumptions on alignment
 
+#ifdef AVS_INTEL_ASSEMBLY
     _asm {
 //****** initialize
       mov   esi,srcStart  //bottom row
@@ -166,12 +169,14 @@ memoptU_done8:
       sfence
       emms
     };
+#endif
     return;
   }//end unaligned version
 
   else {//QW aligned version (fastest)
   //else dstp and row_size QW aligned - hope for the best from srcp
   //QW aligned version should generally be true when copying full rows
+#ifdef AVS_INTEL_ASSEMBLY
     _asm {
       mov   esi,srcStart  //start of bottom row
       mov   edi,dstStart
@@ -250,6 +255,7 @@ memoptA_done8:
       sfence
       emms
     };
+#endif
     return;
   }//end aligned version
 }//end BitBlt_memopt()

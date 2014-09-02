@@ -57,6 +57,8 @@ public:
   Mask(PClip _child1, PClip _child2, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~Mask() {}
+
   inline virtual void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env)
     { child1->GetAudio(buf, start, count, env); }
   inline virtual const VideoInfo& __stdcall GetVideoInfo() 
@@ -87,6 +89,8 @@ public:
   ColorKeyMask(PClip _child, int _color, int _tolB, int _tolG, int _tolR, IScriptEnvironment *env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment *env);
 
+  virtual __stdcall ~ColorKeyMask(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -108,6 +112,8 @@ public:
   ResetMask(PClip _child, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~ResetMask() {}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -125,6 +131,8 @@ class Invert : public GenericVideoFilter
 public:
   Invert(PClip _child, const char * _channels, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~Invert(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -145,6 +153,8 @@ class ShowChannel : public GenericVideoFilter
 public:
   ShowChannel(PClip _child, const char * _pixel_type, int _channel, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~ShowChannel() {}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -169,6 +179,8 @@ public:
            const char * _pixel_type, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~MergeRGB() {}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -192,6 +204,8 @@ public:
   Layer( PClip _child1, PClip _child2, const char _op[], int _lev, int _x, int _y, 
          int _t, bool _chroma, IScriptEnvironment* env );
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~Layer() {}
 
   inline virtual void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) 
     { child1->GetAudio(buf, start, count, env); }
@@ -226,6 +240,8 @@ class Subtract : public IClip
 public:
   Subtract(PClip _child1, PClip _child2, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~Substract() {}
 
   inline virtual void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) 
     { child1->GetAudio(buf, start, count, env);  }

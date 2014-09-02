@@ -70,6 +70,8 @@ public:
   PVideoFrame DrawModeOverlay    (int n, IScriptEnvironment* env);
   PVideoFrame DrawModeAudioLevels(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~Histogram(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }

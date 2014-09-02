@@ -70,6 +70,7 @@ MEMCPY_AMD.CPP
 // Inline assembly syntax for use with Visual C++
 
 #include <avs/config.h>
+#include <stddef.h>
 
 #ifdef X86_32
 void memcpy_amd(void *dest, const void *src, size_t n)
@@ -80,6 +81,7 @@ void memcpy_amd(void *dest, const void *src, size_t n)
   //            convince the compiler to do the right thing, it's not hard, usually a
   //            slight shuffle or a well placed "__asm mov ebx,ebx" does the trick.
 
+#ifdef AVS_INTEL_ASSEMBLY
   __asm {
 
 	mov		ecx, [n]		; number of bytes to copy
@@ -282,5 +284,6 @@ $memcpy_final:
 	mov		eax, [dest]	; ret value = destination pointer
 
     }
+#endif
 }
 #endif

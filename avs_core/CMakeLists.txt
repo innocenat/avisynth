@@ -24,7 +24,7 @@ if (MSVC_IDE)
     COMMAND xcopy /Y \"$(TargetPath)\" \"${CMAKE_BINARY_DIR}/Output\"
   )
 else()
-    add_definitions(" -msse4.2")
+    add_definitions(" -msse4.2 -std=c++11")
 endif()
 
 # Dynamically generate the sequential version info from Git

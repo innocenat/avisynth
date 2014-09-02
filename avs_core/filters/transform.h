@@ -46,6 +46,7 @@ class FillBorder : public GenericVideoFilter
 {
 public:
   FillBorder(PClip _clip);
+  virtual __stdcall ~FillBorder(){}
   static PClip Create(PClip clip);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 };
@@ -59,6 +60,8 @@ class FlipVertical : public GenericVideoFilter
 public:
   FlipVertical(PClip _child) : GenericVideoFilter(_child) {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~FlipVertical(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -77,6 +80,8 @@ public:
   FlipHorizontal(PClip _child) : GenericVideoFilter(_child) {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~FlipHorizontal(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -93,6 +98,8 @@ class Crop : public GenericVideoFilter
 public:
   Crop(int _left, int _top, int _width, int _height, int _align, PClip _child, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~Crop(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -115,6 +122,8 @@ class AddBorders : public GenericVideoFilter
 public:
   AddBorders(int _left, int _top, int _right, int _bot, int _clr, PClip _child, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~AddBorders(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;

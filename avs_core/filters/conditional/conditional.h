@@ -41,7 +41,7 @@ class ConditionalSelect : public GenericVideoFilter
 {
 public:
   ConditionalSelect(PClip _child, const char _expression[], int _num_args, PClip *_child_array, bool _show, IScriptEnvironment* env);
-  ~ConditionalSelect();
+  virtual __stdcall ~ConditionalSelect();
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   static AVSValue __cdecl Create(AVSValue args, void* user_data, IScriptEnvironment* env);
 
@@ -84,6 +84,7 @@ class ScriptClip : public GenericVideoFilter
 {
 public:
   ScriptClip(PClip _child, AVSValue  _script, bool _show, bool _only_eval, bool _eval_after_frame, IScriptEnvironment* env);
+  virtual __stdcall ~ScriptClip(){}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   static AVSValue __cdecl Create(AVSValue args, void* user_data, IScriptEnvironment* env);
   static AVSValue __cdecl Create_eval(AVSValue args, void* user_data, IScriptEnvironment* env);

@@ -42,7 +42,12 @@
 #include <vfw.h>
 #include <cstdio>
 #include <new>
+
+#ifdef _MSC_VER
 #include <intrin.h>
+#else
+#include <x86intrin.h>
+#endif
 
 #define FP_STATE 0x9001f
 
@@ -1094,7 +1099,7 @@ void CAVIStreamSynth::ReadFrame(void* lpBuffer, int n) {
 
 STDMETHODIMP CAVIStreamSynth::Read(LONG lStart, LONG lSamples, LPVOID lpBuffer, LONG cbBuffer, LONG *plBytes, LONG *plSamples) {
 
-#ifdef  X86_32
+#if defined(X86_32) && defined(AVS_INTEL_ASSEMBLY)
   // TODO: Does this need 64-bit porting?
   __asm { // Force compiler to protect these registers!
     mov ebx,ebx;

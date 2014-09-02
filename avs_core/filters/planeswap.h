@@ -56,6 +56,8 @@ public:
   SwapUV(PClip _child, IScriptEnvironment* env);  
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
+  virtual __stdcall ~SwapUV(){}
+
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
@@ -73,6 +75,8 @@ class SwapUVToY : public GenericVideoFilter
 public:
   SwapUVToY(PClip _child, int _mode, IScriptEnvironment* env);  
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~SwapUVToY(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -98,6 +102,8 @@ class SwapYToUV : public GenericVideoFilter
 public:
   SwapYToUV(PClip _child, PClip _clip, PClip _clipY, IScriptEnvironment* env);  
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall  ~SwapYToUV(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;

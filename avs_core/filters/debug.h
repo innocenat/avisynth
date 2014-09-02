@@ -49,7 +49,7 @@ class Null : public GenericVideoFilter
 { 
 public:
   Null( PClip _child, const char * _copy, IScriptEnvironment* env );
-  virtual ~Null(void);
+  virtual __stdcall ~Null(void);
 
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);

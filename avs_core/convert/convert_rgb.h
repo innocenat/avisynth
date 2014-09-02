@@ -45,6 +45,7 @@ class RGB24to32 : public GenericVideoFilter
 {
 public:
   RGB24to32(PClip src);
+  __stdcall ~RGB24to32() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -60,6 +61,7 @@ class RGB32to24 : public GenericVideoFilter
 {
 public:
   RGB32to24(PClip src);
+  __stdcall ~RGB32to24() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {

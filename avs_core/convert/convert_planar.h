@@ -51,6 +51,7 @@ class ConvertToY8 : public GenericVideoFilter
 {
 public:
   ConvertToY8(PClip src, int matrix, IScriptEnvironment* env);
+  __stdcall ~ConvertToY8() {}
   PVideoFrame __stdcall GetFrame(int n,IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -84,6 +85,7 @@ class ConvertRGBToYV24 : public GenericVideoFilter
 {
 public:
   ConvertRGBToYV24(PClip src, int matrix, IScriptEnvironment* env);
+  __stdcall ~ConvertRGBToYV24() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -101,6 +103,7 @@ class ConvertYUY2ToYV16 : public GenericVideoFilter
 {
 public:
   ConvertYUY2ToYV16(PClip src, IScriptEnvironment* env);
+  __stdcall ~ConvertYUY2ToYV16() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -114,6 +117,7 @@ class ConvertYV24ToRGB : public GenericVideoFilter
 {
 public:
   ConvertYV24ToRGB(PClip src, int matrix, int pixel_step, IScriptEnvironment* env);
+  __stdcall ~ConvertYV24ToRGB() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -132,6 +136,7 @@ class ConvertYV16ToYUY2 : public GenericVideoFilter
 {
 public:
   ConvertYV16ToYUY2(PClip src, IScriptEnvironment* env);
+  __stdcall ~ConvertYV16ToYUY2() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -147,7 +152,7 @@ public:
   ConvertToPlanarGeneric(PClip src, int dst_space, bool interlaced,
                          const AVSValue& InPlacement, const AVSValue& ChromaResampler,
                          const AVSValue& OutPlacement, IScriptEnvironment* env);
-  ~ConvertToPlanarGeneric() {}
+  __stdcall ~ConvertToPlanarGeneric() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   static AVSValue __cdecl CreateYV12(AVSValue args, void*, IScriptEnvironment* env);   
   static AVSValue __cdecl CreateYV16(AVSValue args, void*, IScriptEnvironment* env);   

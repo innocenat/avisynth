@@ -26,7 +26,7 @@ private:
 
 
 public:
-  ~MTGuard();
+  __stdcall ~MTGuard();
   MTGuard(PClip firstChild, MtMode mtmode, const AVSFunction* func, std::vector<AVSValue>* args2, std::vector<AVSValue>* args3, IScriptEnvironment2* env);
   void EnableMT(size_t nThreads);
 
@@ -41,4 +41,4 @@ public:
 };
 
 
-#endif _AVS_MTGUARD_H
+#endif // _AVS_MTGUARD_H

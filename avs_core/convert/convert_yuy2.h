@@ -47,6 +47,7 @@ class ConvertToYUY2 : public GenericVideoFilter
 {
 public:
   ConvertToYUY2(PClip _child, bool _dupl, bool _interlaced, const char *matrix, IScriptEnvironment* env);
+  __stdcall ~ConvertToYUY2() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -72,6 +73,7 @@ class ConvertBackToYUY2 : public ConvertToYUY2
 {
 public:
   ConvertBackToYUY2(PClip _child, const char *matrix, IScriptEnvironment* env);
+  __stdcall ~ConvertBackToYUY2() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {

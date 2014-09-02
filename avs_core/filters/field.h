@@ -80,6 +80,8 @@ public:
     //  else both were set (illegal state) or both were unset (parity unknown)
   }
 
+  virtual __stdcall ~ComplementParity(){}
+
   inline bool __stdcall GetParity(int n) {
     return !child->GetParity(n);
   }
@@ -107,6 +109,8 @@ public:
     }
   }
 
+  virtual __stdcall ~AssumeParity() {}
+
   inline bool __stdcall GetParity(int n) {
     return parity ^ (vi.IsFieldBased() && (n & 1));
   }
@@ -130,6 +134,8 @@ public:
     vi.SetFieldBased(true); vi.Clear(VideoInfo::IT_BFF); vi.Clear(VideoInfo::IT_TFF);
   }
 
+  virtual __stdcall ~AssumeFieldBased(){}
+
   inline bool __stdcall GetParity(int n) {
     return n&1;
   }
@@ -152,6 +158,8 @@ public:
     vi.SetFieldBased(false); vi.Clear(VideoInfo::IT_BFF); vi.Clear(VideoInfo::IT_TFF);
   }
 
+  virtual __stdcall ~AssumeFrameBased(){}
+
   inline bool __stdcall GetParity(int n) {
     return false;
   }
@@ -173,6 +181,8 @@ private:
 public:
   SeparateColumns(PClip _child, int _interval, IScriptEnvironment* env);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+
+  virtual __stdcall ~SeparateColumns(){}
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
     return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
@@ -197,6 +207,7 @@ private:
 
 public:
   WeaveColumns(PClip _child, int _period, IScriptEnvironment* env);
+  virtual __stdcall ~WeaveColumns() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -221,6 +232,7 @@ private:
 
 public:
   SeparateRows(PClip _child, int _interval, IScriptEnvironment* env);
+  virtual __stdcall ~SeparateRows() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline bool __stdcall GetParity(int n) {
@@ -242,6 +254,7 @@ private:
 
 public:
   WeaveRows(PClip _child, int _period, IScriptEnvironment* env);
+  virtual __stdcall ~WeaveRows() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -263,6 +276,7 @@ class SeparateFields : public NonCachedGenericVideoFilter
 {
 public:
   SeparateFields(PClip _child, IScriptEnvironment* env);
+  virtual __stdcall ~SeparateFields() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline bool __stdcall GetParity(int n) {
@@ -280,6 +294,7 @@ class DoubleWeaveFields : public GenericVideoFilter
 {
 public:
   DoubleWeaveFields(PClip _child);
+  virtual __stdcall ~DoubleWeaveFields() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
@@ -295,6 +310,7 @@ class DoubleWeaveFrames : public GenericVideoFilter
 {
 public:
   DoubleWeaveFrames(PClip _child);
+  virtual __stdcall ~DoubleWeaveFrames() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 
   inline bool __stdcall GetParity(int n) {
@@ -331,7 +347,7 @@ public:
     return child_array[n % num_children]->GetParity(n / num_children);
   }
 
-  virtual ~Interleave() {
+  virtual __stdcall ~Interleave() {
     delete[] child_array;
   }
 
@@ -353,6 +369,7 @@ class SelectEvery : public NonCachedGenericVideoFilter
 {
 public:
   SelectEvery(PClip _child, int _every, int _from);
+  virtual __stdcall ~SelectEvery() {}
 
   inline PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) {
     return child->GetFrame(n*every+from, env);
@@ -385,6 +402,7 @@ class Fieldwise : public NonCachedGenericVideoFilter
 {  
 public:
   Fieldwise(PClip _child1, PClip _child2);
+  virtual __stdcall ~Fieldwise() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
 
@@ -398,6 +416,7 @@ class SelectRangeEvery : public NonCachedGenericVideoFilter {
   PClip achild;
 public:
   SelectRangeEvery(PClip _child, int _every, int _length, int _offset, bool _audio, IScriptEnvironment* env);
+  virtual __stdcall ~SelectRangeEvery() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);

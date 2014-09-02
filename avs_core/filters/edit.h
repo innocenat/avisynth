@@ -49,6 +49,7 @@ class Trim : public NonCachedGenericVideoFilter
 public:
   Trim(int _firstframe, int _lastframe, bool _padaudio, PClip _child, int mode, IScriptEnvironment* env);
   Trim(double starttime, double endtime, PClip _child, int mode, IScriptEnvironment* env);
+  virtual __stdcall ~Trim() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
@@ -72,6 +73,7 @@ class FreezeFrame : public NonCachedGenericVideoFilter
 {
 public:
   FreezeFrame(int _first, int _last, int _source, PClip _child);
+  virtual __stdcall ~FreezeFrame() {}
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   bool __stdcall GetParity(int n);
 

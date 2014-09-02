@@ -33,25 +33,33 @@
 #define AVSCORE_EXCEPTION_H
 
 // IMPORTANT: Project must be compiled with /EHa
+#ifdef _MSC_VER
 #include <eh.h>
 
 extern void SehTranslatorFunction(unsigned int, struct _EXCEPTION_POINTERS*);
+#endif
 
 class SehGuard
 {
 public:
     SehGuard()
     {
+#ifdef _MSC_VER
         m_prev = _set_se_translator(SehTranslatorFunction);
+#endif
     }
 
     ~SehGuard()
     {
+#ifdef _MSC_VER
         _set_se_translator(m_prev);
+#endif
     }
 
+#ifdef _MSC_VER
 private:
     _se_translator_function m_prev;
+#endif
 };
 
 class SehException

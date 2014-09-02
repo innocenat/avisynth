@@ -16,7 +16,7 @@ private:
   Prefetcher(const PClip& _child, size_t _nThreads, IScriptEnvironment2 *env);
 
 public:
-  ~Prefetcher();
+  __stdcall ~Prefetcher();
   size_t NumPrefetchThreads() const;
   virtual PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
   virtual bool __stdcall GetParity(int n);

@@ -41,7 +41,7 @@ public:
     
   void remove(const T& elem)
   {
-    std::unordered_map<T, std::list<T>::iterator>::iterator map_it = map.find(elem);
+    auto map_it = map.find(elem);
     assert(map_it != map.end());
 
     iterator list_it = map_it->second;

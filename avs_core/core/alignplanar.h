@@ -40,6 +40,7 @@ class AlignPlanar : public GenericVideoFilter
 {
 public:
   AlignPlanar(PClip _clip);
+  __stdcall ~AlignPlanar() {}
   static PClip Create(PClip clip);
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 };

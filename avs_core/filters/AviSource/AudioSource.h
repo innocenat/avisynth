@@ -40,7 +40,7 @@ private:
 
 public:
 	AudioSourceWAV(char *fn, LONG inputBufferSize);
-	~AudioSourceWAV();
+  virtual __stdcall ~AudioSourceWAV();
 
 	BOOL init();
 	virtual int _read(LONG lStart, LONG lCount, LPVOID lpBuffer, LONG cbBuffer, LONG *lSamplesRead, LONG *lBytesRead);
@@ -56,7 +56,7 @@ private:
 
 public:
 	AudioSourceAVI(IAVIReadHandler *pAVIFile, bool bAutomated);
-	~AudioSourceAVI();
+  virtual __stdcall ~AudioSourceAVI();
 
 	void Reinit();
 	bool isStreaming();

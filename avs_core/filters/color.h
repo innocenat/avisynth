@@ -70,6 +70,7 @@ public:
              const char* level, const char* opt,
              bool colorbar, bool analyse, bool autowhite, bool autogain, bool conditional,
              IScriptEnvironment* env);
+    virtual __stdcall ~ColorYUV() {}
 
     PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 

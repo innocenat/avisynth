@@ -68,7 +68,11 @@ enum MANAGE_CACHE_KEYS
 struct AVSFunction {
   const char* name;
   const char* param_types;
+#ifdef AVS_GCC
+  AVSValue (*(__cdecl apply))(AVSValue args, void* user_data, IScriptEnvironment* env);
+#else
   AVSValue (__cdecl *apply)(AVSValue args, void* user_data, IScriptEnvironment* env);
+#endif
   void* user_data;
 
   bool IsScriptFunction() const
@@ -153,6 +157,7 @@ class NonCachedGenericVideoFilter : public GenericVideoFilter
  **/
 {
 public:
+  __stdcall ~NonCachedGenericVideoFilter() {};
   NonCachedGenericVideoFilter(PClip _child);
   int __stdcall SetCacheHints(int cachehints, int frame_range);
 };

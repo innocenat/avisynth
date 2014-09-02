@@ -75,7 +75,7 @@ public:
 
   AVISource(const char filename[], bool fAudio, const char pixel_type[],
             const char fourCC[], int mode, IScriptEnvironment* env);  // mode: 0=detect, 1=avifile, 2=opendml, 3=avifile (audio only)
-  ~AVISource();
+  virtual __stdcall ~AVISource();
   void CleanUp(); // Tritical - Jan 2006
   const VideoInfo& __stdcall GetVideoInfo();
   PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
