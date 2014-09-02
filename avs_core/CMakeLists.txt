@@ -23,6 +23,8 @@ if (MSVC_IDE)
     POST_BUILD
     COMMAND xcopy /Y \"$(TargetPath)\" \"${CMAKE_BINARY_DIR}/Output\"
   )
+else()
+    add_definitions(" -msse4.2")
 endif()
 
 # Dynamically generate the sequential version info from Git

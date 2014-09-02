@@ -4,4 +4,5 @@ Output/
 *.cmake
 CMakeCache.txt
 avs_core/version.h
+.idea/
 
