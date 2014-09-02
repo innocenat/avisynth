@@ -66,14 +66,21 @@
 #if   defined(__INTEL_COMPILER)
 #   define AVS_ICL
 #elif defined(__clang__)
-#   define AVC_CLANG
+#   define AVS_CLANG
 #elif defined(__GNUC__)
-#   define AVC_GCC
+#   define AVS_GCC
 #elif defined(_MSC_VER)
-#   define AVC_MSVC
+#   define AVS_MSVC
 #endif
 
-#ifdef AVC_GCC
+// Inline assembly
+#if defined(AVS_ICL) || (defined(AVS_MSVC) && defined(X86_32))
+#   define AVS_INTEL_ASSEMBLY
+#elif defined(AVS_CLANG) || defined(AVS_GCC)
+#   define AVS_ATT_ASSEMBLY
+#endif
+
+#ifdef AVS_GCC
 #define __single_inheritance
 #endif
 
