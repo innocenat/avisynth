@@ -40,11 +40,11 @@
 // These things don't exist in Linux
 #define __declspec(x)
 
-// Calling convension
+// Calling convention
 #define _stdcall __stdcall
 #define _cdecl   __cdecl
 
-#define __stdcall // No calling convension
+#define __stdcall // No calling convention
 #define __cdecl
 
 #endif // AVSCORE_LINUX_H

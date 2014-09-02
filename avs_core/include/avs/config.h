@@ -44,6 +44,7 @@
 // builds possible.
 #define FRAME_ALIGN 32
 
+// Platform Architecture Flag
 #if   defined(_M_AMD64) || defined(__x86_64)
 #   define X86_64
 #elif defined(_M_IX86) || defined(__i386__)
@@ -52,12 +53,28 @@
 #   error Unsupported CPU architecture.
 #endif
 
+// Operating System Flag
 #ifdef _WIN32
 #   define AVS_WINDOWS
 #elif  __linux__
 #   define AVS_LINUX
 #else
 #   error Operating system unsupported.
+#endif
+
+// Compiler Flag
+#if   defined(__INTEL_COMPILER)
+#   define AVS_ICL
+#elif defined(__clang__)
+#   define AVC_CLANG
+#elif defined(__GNUC__)
+#   define AVC_GCC
+#elif defined(_MSC_VER)
+#   define AVC_MSVC
+#endif
+
+#ifdef AVC_GCC
+#define __single_inheritance
 #endif
 
 #endif //AVS_CONFIG_H
