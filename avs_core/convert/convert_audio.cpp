@@ -104,7 +104,8 @@ void convert24To16_MMX(char* inbuf, void* outbuf, int count) {
 
     const int c_loop = count & ~7;
 
-    if (c_loop) {        
+    if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
       __asm {
         xor        eax, eax             //  counter
         mov        edx, [c_loop]
@@ -140,6 +141,7 @@ c24_start:
         jne        c24_loop
         emms
       }
+#endif
     }
     for (int i=c_loop;i<count;i++)
       out[i] = in[i*3+1] | (in[i*3+2] << 8); 
@@ -163,7 +165,8 @@ void convert16To8_MMX(char* inbuf, void* outbuf, int count) {
 
     const int c_loop = count & ~15;
 
-    if (c_loop) {        
+    if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
       __asm {
         xor        eax, eax             //  counter
         mov        edx, [c_loop]
@@ -197,6 +200,7 @@ c16_loop:
         jne        c16_loop
         emms
       }
+#endif
     }
     for (int i=c_loop;i<count;i++)
       out[i] = (in[i] >> 8) + 128;
@@ -227,7 +231,8 @@ void convert8To16_MMX(char* inbuf, void* outbuf, int count) {
 
     const int c_loop = count & ~15;
 
-    if (c_loop) {        
+    if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
       __asm {
         xor        eax, eax             //  counter
         mov        edx, [c_loop]
@@ -262,6 +267,7 @@ c8_loop:
         jne        c8_loop
         emms
       }
+#endif
     }
     for (int i=c_loop;i<count;i++)
       out[i] = ((in[i]-128) << 8) | in[i];
@@ -293,7 +299,7 @@ void __stdcall ConvertAudio::GetAudio(void* buf, __int64 start, __int64 count, I
 #endif
     {
       convert24To16(tempbuffer, buf, (int)count*channels);
-	  }
+    }
 	  return;
   }
   if (src_format == SAMPLE_INT8 && dst_format == SAMPLE_INT16) {
@@ -509,7 +515,8 @@ void ConvertAudio::convertToFloat_SSE(char* inbuf, float* outbuf, char sample_ty
       int c_miss = count & 3;
       int c_loop = (count - c_miss);  // Number of samples.
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor       eax, eax                  // count
           mov       edx, [c_loop]
@@ -535,6 +542,7 @@ c16_loop:
           jne       c16_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=(float)samples[i+c_loop] * divisor;
@@ -547,7 +555,8 @@ c16_loop:
       int c_miss = count & 3;
       int c_loop = count-c_miss; // in samples
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor      eax, eax               // count
           mov      edx, [c_loop]
@@ -570,6 +579,7 @@ c32_loop:
           jne      c32_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=samples[i+c_loop] * divisor;
@@ -619,7 +629,8 @@ void ConvertAudio::convertToFloat_SSE2(char* inbuf, float* outbuf, char sample_t
       int c_miss = count & 15;
       int c_loop = (count - c_miss);  // Number of samples.
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor       eax, eax                  // count
           mov       edx, [c_loop]
@@ -661,6 +672,7 @@ c8_loop:
           jne       c8_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++)
         outbuf[i+c_loop]=(samples[i+c_loop]-128) * divisor;
@@ -678,7 +690,8 @@ c8_loop:
       int c_miss = count & 7;
       int c_loop = (count - c_miss);  // Number of samples.
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor       eax, eax                  // count
           mov       edx, [c_loop]
@@ -705,6 +718,7 @@ c16_loop:
           jne       c16_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=(float)samples[i+c_loop] * divisor;
@@ -723,7 +737,8 @@ c16_loop:
       int c_miss = count & 7;
       int c_loop = count-c_miss; // in samples
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor      eax, eax               // count
           mov      edx, [c_loop]
@@ -747,6 +762,7 @@ c32_loop:
           jne      c32_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=(float)samples[i+c_loop] * divisor;
@@ -776,7 +792,8 @@ c32_loop:
       if (c_miss == 0 && count != 0) c_miss=8;
       int c_loop = count-c_miss; // in samples
 
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor      eax, eax               // count
           mov      edx, [c_loop]
@@ -815,6 +832,7 @@ c24_loop:
           jne        c24_loop
           emms
         }
+#endif
       }
       for (i=c_loop;i<count;i++) {
         const signed int tval = (samples[i*3]<<8) | (samples[i*3+1] << 16) | (samples[i*3+2] << 24); 
@@ -848,7 +866,8 @@ void ConvertAudio::convertToFloat_3DN(char* inbuf, float* outbuf, char sample_ty
       signed short* samples = (signed short*)inbuf;
       int c_miss = count & 3;
       int c_loop = (count - c_miss);  // Number of samples.
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // count
           mov edx, [c_loop]
@@ -875,6 +894,7 @@ c16_loop:
           jne c16_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=(float)samples[i+c_loop] * divisor;
@@ -886,7 +906,8 @@ c16_loop:
       signed int* samples = (signed int*)inbuf;
       int c_miss = count & 3;
       int c_loop = count-c_miss; // in samples
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // count
           mov edx, [c_loop]
@@ -910,6 +931,7 @@ c32_loop:
           jne c32_loop
           emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         outbuf[i+c_loop]=(float)samples[i+c_loop] * divisor;
@@ -930,7 +952,8 @@ c32_loop:
       int c_miss = count & 3;
       if (c_miss == 0 && count != 0) c_miss=4;
       int c_loop = count-c_miss; // in samples
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // count
           mov edx, [c_loop]
@@ -961,6 +984,7 @@ c24_loop:
           jne c24_loop
           emms
         }
+#endif
       }
       for (i=c_loop;i<count;i++) {
         const signed int tval = (samples[i*3]<<8) | (samples[i*3+1] << 16) | (samples[i*3+2] << 24); 
@@ -998,7 +1022,8 @@ void ConvertAudio::convertFromFloat_3DN(float* inbuf,void* outbuf, char sample_t
       signed short* samples = (signed short*)outbuf;
       int c_miss = count & 3;
       int c_loop = count-c_miss; // in samples
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // count
             mov edx, [c_loop]
@@ -1028,6 +1053,7 @@ c16f_loop:
             jne c16f_loop
             emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         samples[i+c_loop]=Saturate_int16(inbuf[i+c_loop] * multiplier);
@@ -1040,7 +1066,8 @@ c16f_loop:
       signed int* samples = (signed int*)outbuf;
       int c_miss = count & 3;
       int c_loop = count-c_miss; // in samples
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // count
             mov edx, [c_loop]
@@ -1064,6 +1091,7 @@ c32f_loop:
             jne c32f_loop
             emms
         }
+#endif
       }
       for (i=0; i<c_miss; i++) {
         samples[i+c_loop]=Saturate_int32(inbuf[i+c_loop] * multiplier);
@@ -1078,7 +1106,8 @@ c32f_loop:
       int c_miss = count & 3;
       if (c_miss == 0 && count != 0) c_miss=4;
       int c_loop = count-c_miss; // in samples
-      if (c_loop) {        
+      if (c_loop) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         __asm {
           xor eax,eax                   // input offset count
           mov edx, [c_loop]
@@ -1115,6 +1144,7 @@ c24f_loop:
           jne c24f_loop
           emms
         }
+#endif
       }
       for (i=0;i<c_miss;i++) {
         signed int tval = Saturate_int24(inbuf[i+c_loop] * multiplier);
@@ -1200,7 +1230,8 @@ void ConvertAudio::convertFromFloat_SSE(float* inbuf,void* outbuf, char sample_t
 
       const float mult = 32768.0f;
 
-      if (count) {        
+      if (count) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
 		_asm {
           movss    xmm7, [mult]
           shufps   xmm7, xmm7, 00000000b
@@ -1224,6 +1255,7 @@ cf16_loop:
 		  jne      cf16_loop
 		  emms
 		}
+#endif
       }
       for (i=0;i<sleft;i++) {
         samples[count+i]=Saturate_int16(inbuf[count+i] * mult);
@@ -1241,6 +1273,7 @@ cf16_loop:
 
       if (count) {
 		int temp[7];
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         _asm {
 		  lea      esi, [temp]
           movss    xmm7, [mult]
@@ -1271,6 +1304,7 @@ cf32_loop:
           jne      cf32_loop
           emms
         }
+#endif
       }
       for (i=0;i<sleft;i++) {
         samples[count+i]=Saturate_int32(inbuf[count+i] * mult);
@@ -1320,6 +1354,7 @@ void ConvertAudio::convertFromFloat_SSE2(float* inbuf,void* outbuf, char sample_
       const float mult = 128.0f;
 
       if (count) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         _asm {
           pcmpeqw  xmm6, xmm6                  //  ffff | ffff | ffff | ffff | ffff | ffff | ffff | ffff
           movss    xmm7, [mult]                //  128.0f
@@ -1359,6 +1394,7 @@ cf8_loop:
           jne      cf8_loop
           emms
         }
+#endif
       }
       for (i=0;i<sleft;i++)
         samples[count+i]=(unsigned char)Saturate_int8(inbuf[count+i] * 128.0f)+128;
@@ -1384,6 +1420,7 @@ cf8_loop:
       count -= sleft;
 
       if (count) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
 		_asm {
           movss    xmm7, [mult]                //  32768.0f
 		  mov      eax, inbuf
@@ -1409,6 +1446,7 @@ cf16_loop:
 		  jne      cf16_loop
 		  emms
 		}
+#endif
       }
       for (i=0;i<sleft;i++) {
         samples[count+i]=Saturate_int16(inbuf[count+i] * 32768.0f);
@@ -1435,6 +1473,7 @@ cf16_loop:
       count -= sleft;
 
       if (count) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         _asm {
           movss    xmm7, [mult]
           mov      eax, inbuf
@@ -1462,6 +1501,7 @@ cf32_loop:
           jne      cf32_loop
           emms
         }
+#endif
       }
       for (i=0;i<sleft;i++) {
         samples[count+i]=Saturate_int32(inbuf[count+i] * mult);
@@ -1489,6 +1529,7 @@ cf32_loop:
       count -= sleft;
 
       if (count) {
+#if defined(AVS_MSVC) || defined(AVS_ICL)
         _asm {
           movss    xmm7, [mult]
           movss    xmm6, [maxF]
@@ -1535,6 +1576,7 @@ cf24_loop:
           jne      cf24_loop
           emms
         }
+#endif
       }
       for (i=count;i<count+sleft;i++) {
         const signed int tval = Saturate_int24(inbuf[i] * mult);
